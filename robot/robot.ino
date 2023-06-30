@@ -14,15 +14,15 @@
 BluetoothSerial bluetooth;
 
 // If your robot has more than a drivetrain and one servo, add those actuators here 
-NoU_Motor frontLeftMotor(5);
-NoU_Motor frontRightMotor(6);
-NoU_Motor rearLeftMotor(1);
-NoU_Motor rearRightMotor(4);
+NoU_Motor frontLeftMotor(6);
+NoU_Motor frontRightMotor(5);
+NoU_Motor rearLeftMotor(1); // bug in angle code where i had the back two modules wired incorrecltly before fixing the error, too late to fix error at this moment
+NoU_Motor rearRightMotor(4); //^
 
 NoU_Servo frontLeftServo(1);
 NoU_Servo frontRightServo(2);
-NoU_Servo rearLeftServo(3);
-NoU_Servo rearRightServo(4);
+NoU_Servo rearLeftServo(4);
+NoU_Servo rearRightServo(3);
 
 int x = 0;
 // This creates the drivetrain object, you shouldn't have to mess with this
@@ -36,12 +36,12 @@ float deadband(float value, float deadband){
   return value;
 }
 void setup() {
-  frontLeftMotor.setInverted(false);
-  frontRightMotor.setInverted(true);
-  rearLeftMotor.setInverted(false);
-  rearRightMotor.setInverted(true);
+  frontLeftMotor.setInverted(true);
+  frontRightMotor.setInverted(false);
+  rearLeftMotor.setInverted(true);
+  rearRightMotor.setInverted(false);
 
-  //Serial.begin(9600);
+  Serial.begin(9600);
 //EVERYONE SHOULD CHANGE "ESP32 Bluetooth" TO THE NAME OF THEIR ROBOT HERE BEFORE PAIRING THEIR ROBOT TO ANY LAPTOP
     bluetooth.begin("Team 50 - Spark");
     AlfredoConnect.begin(bluetooth);
@@ -60,7 +60,7 @@ void setup() {
 }
 
 void loop() {
-
+  Serial.println("I PREVENT BROWNOUTS");
 // Here we define the variables we use in the loop
     double throttle = 0;
     int rotation = 0;
@@ -76,9 +76,20 @@ void loop() {
         float speed = deadband(-std::hypot(AlfredoConnect.getAxis(0, 1) * pi / 180, AlfredoConnect.getAxis(0, 0) * pi / 180),0);
 
         //Serial.println(speed * (180 / pi));
-        drivetrain.set(speed * (180 / pi), (angle * (180 / pi) + 90),0);
+        drivetrain.set(speed * (180 / pi), (angle * (180 / pi)),0);
+        /*
+        frontLeftMotor.set(.7);
+        frontLeftServo.write(45);
+        frontRightMotor.set(.7);
+        frontRightServo.write(135);
+
+        rearLeftMotor.set(.7);
+        rearLeftServo.write(135);
+        rearRightMotor.set(.7);
+        rearRightServo.write(45);
+        */
         //drivetrain.set(0, (angle * (180 / pi) + 90),0);
-       // drivetrain.set(speed * (180 / pi), 0,0);
+        //drivetrain.set(speed * (180 / pi), 0,0);
         //drivetrain.set(0,AlfredoConnect.getAxis(0, 0) * 360,0);
 
         RSL::setState(RSL_ENABLED);
@@ -88,6 +99,7 @@ void loop() {
 
 // Here we decide what the servo angle will be based on if the Q key is pressed ()
     if (AlfredoConnect.keyHeld(Key::Q)) {
+      Serial.println("KILL ME");
         servoAngle = 50;
     }
     else {

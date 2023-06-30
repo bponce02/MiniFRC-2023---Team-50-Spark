@@ -1,4 +1,4 @@
-2#include <Alfredo_NoU2.h>
+#include <Alfredo_NoU2.h>
 #include "SwerveModule.h"
 #include <cmath>
 
@@ -20,7 +20,7 @@ int SwerveModule::convertToDegrees(int degrees){
 }
 
 bool SwerveModule::compareServoDegreesToDegrees(int degrees){
-  if(minPosition < maxPosition){
+  if(0 < this->attachedAngle < 90 || 180 < this->attachedAngle < 270){
     return std::round(servo->getDegrees()) == this->degreesToServoDegrees(this->convertToDegrees(degrees + maxPosition));
   } else {
     return std::round(servo->getDegrees()) == this->degreesToServoDegrees(this->convertToDegrees(degrees - minPosition));
@@ -43,18 +43,26 @@ void SwerveModule::reverseMotors(int degrees){
     }
   }
   */
-  float radians = ((degrees - 45) * (3.14/180));
-  if(0 < this->attachedAngle < 90 || 180 < this->attachedAngle < 270){
+  float radians = ((degrees) * (3.14/180));
+  //float radians = (degrees * (3.14/180));
+  //Serial.print("Attached Angle");
+    //Serial.println(this->attachedAngle);
+  if((this->attachedAngle > 0 && this->attachedAngle  < 90) || (this->attachedAngle > 180 && this->attachedAngle  < 270)){
+  //if(0 < this->attachedAngle < 180 ){
+    Serial.print("Attached Angle");
+    Serial.println(this->attachedAngle);
+    Serial.print("radians: ");
+    Serial.println(radians * 57.2958);
     if (std::sin(radians) > 0){
-      reverseMotor = true;
-    } else {
-       reverseMotor = false;
-    }
-  } else {
-    if (std::cos(radians) > 0){
       reverseMotor = false;
     } else {
        reverseMotor = true;
+    }
+  } else {
+    if (std::cos(radians) > 0){
+      reverseMotor = true;
+    } else {
+       reverseMotor = false;
     }
   }
   //if(180 > this->attachedAngle){
@@ -73,7 +81,7 @@ int SwerveModule::degreesToServoDegrees(int degrees){
   //Serial.print("degrees");
   //Serial.println(degrees);
   
-  this->reverseMotors(degrees);
+  //this->reverseMotors(degrees);
  
   //if(degrees - maxPosition > (degrees - maxPosition) % 180){
   //if(degrees > this->convertToDegrees(degrees - maxPosition)){
@@ -102,9 +110,12 @@ bool SwerveModule::isAngleSet() {
 
 void SwerveModule::setAngle(int degrees){
   currentMillis = millis();
+  reverseMotors(degrees);
   if(!this->compareServoDegreesToDegrees(degrees)){
     previousMillis = millis();
-    if(minPosition < maxPosition){
+    //if(minPosition < maxPosition){
+      //if((this->attachedAngle > 0 && this->attachedAngle  < 90) || (this->attachedAngle > 180 && this->attachedAngle  < 270)){
+    if(0 < this->attachedAngle < 90 || 180 < this->attachedAngle < 270){
       servo->write(this->degreesToServoDegrees(this->convertToDegrees(degrees + maxPosition)));
     } else {
       servo->write(this->degreesToServoDegrees(this->convertToDegrees(degrees - minPosition)));
@@ -124,5 +135,7 @@ void SwerveModule::setSpeed(float speed){
     } else {
       motor->set(speed * -1);
     }
+  } else {
+    motor->set(0);
   }
 }
