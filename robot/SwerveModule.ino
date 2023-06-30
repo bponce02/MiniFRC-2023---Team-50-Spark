@@ -28,31 +28,8 @@ bool SwerveModule::compareServoDegreesToDegrees(int degrees){
 }
 
 void SwerveModule::reverseMotors(int degrees){
-  /*
-  if(180 < this->attachedAngle){
-    if(!(this->convertToDegrees(degrees - (maxPosition + 45)) > 180  || 180 > this->convertToDegrees(degrees - minPosition - 45))){
-      reverseMotor = true;
-    } else {
-      reverseMotor = false;
-    }
-  } else {
-    if(this->convertToDegrees(degrees - (maxPosition - 45)) > 180  || 180 > this->convertToDegrees(degrees + minPosition + 45)){
-      reverseMotor = true;
-    } else {
-      reverseMotor = false;
-    }
-  }
-  */
   float radians = ((degrees) * (3.14/180));
-  //float radians = (degrees * (3.14/180));
-  //Serial.print("Attached Angle");
-    //Serial.println(this->attachedAngle);
   if((this->attachedAngle > 0 && this->attachedAngle  < 90) || (this->attachedAngle > 180 && this->attachedAngle  < 270)){
-  //if(0 < this->attachedAngle < 180 ){
-    Serial.print("Attached Angle");
-    Serial.println(this->attachedAngle);
-    Serial.print("radians: ");
-    Serial.println(radians * 57.2958);
     if (std::sin(radians) > 0){
       reverseMotor = false;
     } else {
@@ -65,37 +42,10 @@ void SwerveModule::reverseMotors(int degrees){
        reverseMotor = false;
     }
   }
-  //if(180 > this->attachedAngle){
-   // reverseMotor = !reverseMotor;
-  //}
 }
 
 int SwerveModule::degreesToServoDegrees(int degrees){
-  //Serial.print("reverse Motor: ");
-  //Serial.print(reverseMotor);
-  //Serial.print("degrees: ");
-  //Serial.print(degrees);
-  //Serial.print("servo degrees: ");
   int servoDegrees = degrees % 180;
-  //Serial.println(servoDegrees);
-  //Serial.print("degrees");
-  //Serial.println(degrees);
-  
-  //this->reverseMotors(degrees);
- 
-  //if(degrees - maxPosition > (degrees - maxPosition) % 180){
-  //if(degrees > this->convertToDegrees(degrees - maxPosition)){
-  //if(degrees > this->convertToDegrees(180 - minPosition)){
-   /* 
-  //if(this->convertToDegrees(degrees - (maxPosition - 45)) > 180  || 180 > this->convertToDegrees(degrees - minPosition + 45)){
-    if(!(this->convertToDegrees(degrees - (maxPosition + 45)) > 180  || 180 > this->convertToDegrees(degrees - minPosition - 45))){
-  //if(compareServoDegreesToDegrees(degrees)){
-    reverseMotor = true;
-    //reverseMotor = fale;
-  } else {
-    reverseMotor = false;
-  }
-  */
   
   if(servoDegrees < 0){
     return servoDegrees += 180;
@@ -113,8 +63,6 @@ void SwerveModule::setAngle(int degrees){
   reverseMotors(degrees);
   if(!this->compareServoDegreesToDegrees(degrees)){
     previousMillis = millis();
-    //if(minPosition < maxPosition){
-      //if((this->attachedAngle > 0 && this->attachedAngle  < 90) || (this->attachedAngle > 180 && this->attachedAngle  < 270)){
     if(0 < this->attachedAngle < 90 || 180 < this->attachedAngle < 270){
       servo->write(this->degreesToServoDegrees(this->convertToDegrees(degrees + maxPosition)));
     } else {

@@ -44,8 +44,6 @@ void SwerveDrive::setAngle(float frontLeftAngle, float frontRightAngle, float re
 void SwerveDrive::set(float x, float y, float z){
   this->setAngle(y, y, y, y);
   this->setSpeed(x, x, x, x);
-  //this->setAngle(90, 90, 90, 90);
-  //this->setSpeed(x*.7, x*.7, x*.7, x*.7);
   
 }
 void SwerveDrive::test(int x){
